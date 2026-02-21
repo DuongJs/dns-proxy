@@ -6,7 +6,7 @@ const net = require("net");
 const dns = require("dns");
 
 const LISTEN_HOST = process.env.PROXY_HOST || "0.0.0.0";
-const LISTEN_PORT = Number(process.env.PROXY_PORT || 3128);
+const LISTEN_PORT = Number(process.env.PORT || process.env.PROXY_PORT || 3128);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 30000);
 const CONNECT_TIMEOUT_MS = Number(process.env.CONNECT_TIMEOUT_MS || 20000);
 const ALLOW_CONNECT_PORTS = parsePortList(process.env.ALLOW_CONNECT_PORTS || "");
