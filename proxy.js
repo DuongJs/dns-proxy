@@ -195,18 +195,24 @@ function sendSimpleResponse(socketOrRes, statusCode, text) {
 }
 
 function toTargetUrl(req) {
+  if (!/^https?:\/\//i.test(req.url || "")) return null;
   try {
     return new URL(req.url);
   } catch {
-    if (!req.headers.host) return null;
-    return new URL(`http://${req.headers.host}${req.url}`);
+    return null;
   }
 }
 
 const server = http.createServer((clientReq, clientRes) => {
+  if (clientReq.url === "/" || clientReq.url === "/healthz") {
+    clientRes.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+    clientRes.end("proxydns ok");
+    return;
+  }
+
   const target = toTargetUrl(clientReq);
   if (!target || (target.protocol !== "http:" && target.protocol !== "https:")) {
-    sendSimpleResponse(clientRes, 400, "Invalid target URL");
+    sendSimpleResponse(clientRes, 400, "Forward proxy expects absolute URL (http://... or https://...)");
     return;
   }
 
